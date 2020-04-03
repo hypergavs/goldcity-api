@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class LoginController extends Controller
 {
@@ -47,7 +49,21 @@ class LoginController extends Controller
         }
 
         $user = $request->user();
-        return $user;
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->token;
+        
+        $token->save();
+
+        $response = [
+            'token' => $tokenResult->accessToken,
+            'token_type' => 'Bearer',
+            'expires_at' => Carbon::parse(
+                $tokenResult->token->expires_at
+            )->toDateTimeString(),
+            'user' => $user
+        ];
+
+        return response()->json($response);
     }
 
     public function __construct()
