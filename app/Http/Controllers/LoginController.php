@@ -40,7 +40,7 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'     =>  'required|string',
+            'username'     =>  'required|string',
             'password'     =>  'required|string'
         ]);
 
@@ -69,5 +69,10 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function username()
+    {
+        return 'username';
     }
 }

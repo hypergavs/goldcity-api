@@ -19,3 +19,10 @@ use Illuminate\Http\Request;
 Route::prefix('/user')->group(function () {
     Route::post('/login', 'LoginController@login');
 });
+
+Route::middleware(['auth:api'])->group(function() {
+    Route::namespace('Admin')->prefix('admin')->group(function () {
+        Route::get('/self', 'UsersController@me');
+        Route::get('/users', 'UsersController@all');
+    });
+});
