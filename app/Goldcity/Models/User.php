@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'username', 'password',
+        'first_name', 'middle_name', 'last_name', 'email', 'username', 'password', 'role_id', 'pincode'
     ];
 
     /**
@@ -36,7 +36,15 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'created_at' => 'date:F  d, Y'
     ];
+
+    protected $with = ['role'];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 
     public function latest_token()
     {

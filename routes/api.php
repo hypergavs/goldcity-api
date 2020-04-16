@@ -20,9 +20,17 @@ Route::prefix('/user')->group(function () {
     Route::post('/login', 'LoginController@login');
 });
 
-Route::middleware(['auth:api'])->group(function() {
+Route::middleware(['auth:api'])->group(function () {
     Route::namespace('Admin')->prefix('admin')->group(function () {
         Route::get('/self', 'UsersController@me');
-        Route::get('/users', 'UsersController@all');
+
+        Route::prefix('users')->group(function () {
+            Route::get('/', 'UsersController@listAllWithPagination');
+            Route::post('create', 'UsersController@createUser');
+        });
+
+        Route::prefix('roles')->group(function () {
+            Route::get('/', 'RolesController@getRoles');
+        });
     });
 });
