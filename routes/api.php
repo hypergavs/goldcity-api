@@ -27,6 +27,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/', 'UsersController@listAllWithPagination');
             Route::post('create', 'UsersController@createUser');
+            Route::post('{user}/update', 'UsersController@updateUser');
         });
 
         Route::prefix('roles')->group(function () {

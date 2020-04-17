@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Goldcity\Models\User;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UsersController extends Controller
 {
@@ -48,7 +49,37 @@ class UsersController extends Controller
     public function createUser(CreateUserRequest $request)
     {
         $request = $request->except('password2');
+        $request['password'] = \bcrypt($request['password']);
         $user = User::create($request);
+        return $user;
+    }
+
+    public function updateUser(UpdateUserRequest $request, User $user)
+    {
+        $password_update = false;
+        if ($request->get('password')) {
+            $new_password['password']= \bcrypt($request->get('password'));
+            $password_update = true;
+        }
+
+        $not_unique = User::where(function ($query) use ($user, $request) {
+            $query->where('email', $request->get('email'))
+                ->orWhere('username', $request->get('username'));
+        })->where('id', '!=', $user->id)->count();
+
+        if ($not_unique) {
+            return response()->json("Username or Email is already taken!", 422);
+        }
+
+        $request = $request->only([
+            'first_name', 'middle_name', 'last_name', 'email', 'username', 'role_id', 'pincode'
+        ]);
+
+        $request = $password_update ? array_merge($request, $new_password) : $request;
+            
+        $user->fill($request);
+        $user->save();
+
         return $user;
     }
 }

@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('pincode');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('user_status')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });
